@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+    <context:component-scan base-package="com.hello.dao" />
+    <context:component-scan base-package="com.hello.service" />
+    <!-- 导入数据库配置文件 -->
+    <context:property-placeholder location="classpath:db-mysql.properties" />
+
+    <!-- 定义一个数据源 -->
+    <bean id="dataSource"
+          class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          destroy-method="close"
+          p:driverClass="${jdbc.driverClassName}"
+          p:jdbcUrl="${jdbc.url}"
+          p:user="${jdbc.user}"
+          p:password="${jdbc.pass}"
+          p:acquireIncrement="3"
+          p:initialPoolSize="10"
+          p:minPoolSize="2"
+          p:maxPoolSize="10"  />
+
+    <!-- 定义hibernate的sessionFactory -->
+    <!-- 注意，如果使用JPA注释映射，则使用p:packagesToScan
+                  使用实体类映射文件，则要使用p:mappingDirectoryLocations="classpath: " -->
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+          p:dataSource-ref="dataSource"
+          p:packagesToScan="com/hello/entity" >
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">
+                    org.hibernate.dialect.MySQL5Dialect
+                </prop>
+                <prop key="hibernate.show_sql">
+                    true
+                </prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="hibernateTemplate"
+          class="org.springframework.orm.hibernate5.HibernateTemplate"
+          p:sessionFactory-ref="sessionFactory" />
+
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate5.HibernateTransactionManager"
+          p:sessionFactory-ref="sessionFactory"/>
+
+</beans>

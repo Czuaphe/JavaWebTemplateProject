@@ -1,0 +1,26 @@
+group 'com.czuaphe.test'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // Spring_4.3.12 Hibernate_5.2.11 c3p0_0.9.5.2 commons-lang_3.6
+    compile fileTree(dir:'lib',include:['*.jar'])
+
+    // 连接数据库
+    compile 'mysql:mysql-connector-java:5.1.38'
+    // 单元测试框架
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    // 集成测试框架
+    testCompile 'org.testng:testng:6.8.17'
+    // 模拟测试框架
+    testCompile "org.mockito:mockito-core:2.+"
+}
